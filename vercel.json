@@ -1,0 +1,9 @@
+{
+  "rewrites": [{ "source": "/((?!assets/|textures/|blog/posts/|blog/posts\\.json|resume/|favicon).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/textures/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
+}

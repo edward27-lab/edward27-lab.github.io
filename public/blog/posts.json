@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "reading-a-report-nobody-fixes",
+    "title": "A finding nobody understands is a finding nobody fixes",
+    "date": "2026-09-06",
+    "summary": "How I write pentest reports so a product owner, not just another tester, can act on them. The report matters as much as the hack.",
+    "tags": [
+      "reporting",
+      "methodology",
+      "writeup"
+    ],
+    "minutes": 2,
+    "draft": true,
+    "sample": true
+  },
+  {
+    "slug": "access-control-testing-checklist",
+    "title": "Access control is where I look first",
+    "date": "2026-08-30",
+    "summary": "A repeatable way to find broken access control in a web app before touching anything fancier, using the booking-system test from my industry project as the worked example.",
+    "tags": [
+      "web",
+      "access-control",
+      "methodology"
+    ],
+    "minutes": 3,
+    "draft": true,
+    "sample": true
+  },
+  {
+    "slug": "access-control-is-still-the-easy-win",
+    "title": "Access control is still the easy win",
+    "date": "2026-08-22",
+    "summary": "Broken access control keeps topping the OWASP list for a reason. A short field guide to the checks that find it fastest on a real web app.",
+    "tags": [
+      "web",
+      "access-control",
+      "methodology"
+    ],
+    "minutes": 2,
+    "draft": true,
+    "sample": true
+  },
+  {
+    "slug": "android-pentest-lab",
+    "title": "A minimal Android app testing lab",
+    "date": "2026-07-18",
+    "summary": "The setup I use to pull apart an APK: an emulator with a proxy, MobSF for the first pass, JADX for reading, Frida for the parts that resist.",
+    "tags": [
+      "android",
+      "mobile",
+      "tooling"
+    ],
+    "minutes": 2,
+    "draft": true,
+    "sample": true
+  }
+]
