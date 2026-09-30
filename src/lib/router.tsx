@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type MouseEvent, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 
 /**
  * A very small history-based router. Routes are matched in order; ":param"
@@ -11,8 +11,9 @@ export interface RouteMatch {
   params: Record<string, string>;
 }
 
-const RouterContext = createContext<{ path: string; navigate: (to: string, opts?: { replace?: boolean }) => void }>({
+const RouterContext = createContext<{ path: string; search: string; navigate: (to: string, opts?: { replace?: boolean }) => void }>({
   path: '/',
+  search: '',
   navigate: () => {},
 });
 
@@ -32,10 +33,10 @@ export function normalisePath(p: string) {
 }
 
 export function RouterProvider({ children }: { children: ReactNode }) {
-  const [path, setPath] = useState(() => normalisePath(window.location.pathname));
+  const [loc, setLoc] = useState(() => ({ path: normalisePath(window.location.pathname), search: window.location.search }));
 
   useEffect(() => {
-    const onPop = () => setPath(normalisePath(window.location.pathname));
+    const onPop = () => setLoc({ path: normalisePath(window.location.pathname), search: window.location.search });
     window.addEventListener('popstate', onPop);
     const norm = normalisePath(window.location.pathname);
     if (norm !== window.location.pathname) window.history.replaceState({}, '', norm + window.location.search + window.location.hash);
@@ -43,19 +44,29 @@ export function RouterProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const navigate = (to: string, opts: { replace?: boolean } = {}) => {
-    const [pathname, hash] = to.split('#');
+    const [beforeHash, hash] = to.split('#');
+    const q = beforeHash.indexOf('?');
+    const pathname = q >= 0 ? beforeHash.slice(0, q) : beforeHash;
+    const search = q >= 0 ? beforeHash.slice(q) : '';
     const norm = normalisePath(pathname || '/');
-    if (norm === path && !hash) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-    if (opts.replace) window.history.replaceState({}, '', norm + (hash ? '#' + hash : ''));
-    else window.history.pushState({}, '', norm + (hash ? '#' + hash : ''));
-    setPath(norm);
+    if (norm === loc.path && search === loc.search && !hash) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    const url = norm + search + (hash ? '#' + hash : '');
+    if (opts.replace) window.history.replaceState({}, '', url);
+    else window.history.pushState({}, '', url);
+    setLoc({ path: norm, search });
   };
 
-  return <RouterContext.Provider value={{ path, navigate }}>{children}</RouterContext.Provider>;
+  return <RouterContext.Provider value={{ path: loc.path, search: loc.search, navigate }}>{children}</RouterContext.Provider>;
 }
 
 export function useRouter() {
   return useContext(RouterContext);
+}
+
+/** The current query string, parsed. Only the mini-CTF pages use query parameters. */
+export function useQuery(): URLSearchParams {
+  const { search } = useRouter();
+  return useMemo(() => new URLSearchParams(search), [search]);
 }
 
 export function matchRoute(pattern: string, path: string): RouteMatch | null {

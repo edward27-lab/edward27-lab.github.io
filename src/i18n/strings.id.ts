@@ -151,4 +151,77 @@ export const id: Strings = {
     body: 'Halaman itu tidak ada. Coba bulannya saja.',
     back: 'Kembali ke beranda',
   },
+  /**
+   * Mini-CTF tersembunyi (src/ctf/). Hanya UI permainannya yang diterjemahkan:
+   * penghitung, kartu capture, dan papan skor /pwned. Panel admin lawas
+   * beserta error MySQL/PHP-nya, robots.txt, dan /etc/passwd sengaja tetap
+   * berbahasa Inggris: server sungguhan tidak menerjemahkan pesan errornya.
+   */
+  ctf: {
+    counter: {
+      label: 'vulns',
+      aria: (n: number, total: number) => `Kerentanan ditemukan: ${n} dari ${total}. Buka papan skor.`,
+    },
+    capture: {
+      found: 'Kerentanan ditemukan',
+      copy: 'salin',
+      copied: 'tersalin',
+      progress: 'Progres:',
+      viewBoard: 'Lihat papan',
+      dismiss: 'Tutup',
+    },
+    vulns: {
+      recon: { name: 'Kebocoran informasi', sub: 'recon' },
+      sqli: { name: 'SQL injection', sub: 'bypass autentikasi' },
+      traversal: { name: 'Path traversal', sub: 'baca file sembarang' },
+      idor: { name: 'IDOR', sub: 'eskalasi hak akses' },
+      xss: { name: 'Reflected XSS', sub: 'persistensi' },
+    },
+    hints: {
+      recon: [
+        'Setiap pentest dimulai dengan cara yang sama: lihat apa yang situs ini minta agar crawler tidak lihat.',
+        'Ada file teks biasa di root setiap situs yang sopan, berisi daftar path yang pemiliknya ingin sembunyikan.',
+        'Buka /robots.txt, lalu pergi tepat ke tempat yang dilarang.',
+      ],
+      sqli: [
+        'Panel lawas itu punya form login. Pesan errornya bercerita lebih dari yang seharusnya.',
+        'Error itu datang dari MySQL. Input kamu masuk ke dalam string berkutip di sebuah query.',
+        "Tutup kutipnya dan buat kondisinya selalu benar: ' OR 1=1 --",
+      ],
+      traversal: [
+        'File Manager mengambil nama file dari URL. Apakah ia memeriksa di mana file itu berada?',
+        'notes.txt menyebut jenis path yang diterima si penampil file.',
+        'Keluar dari folder share: ?file=../../etc/passwd',
+      ],
+      idor: [
+        'Halaman Users menampilkan record milikmu sendiri. Apa yang mengidentifikasinya di URL?',
+        'Petunjuk tentang dari mana id dimulai ada di baris paling bawah file yang sudah kamu baca.',
+        'Ganti ?id=2 menjadi ?id=1.',
+      ],
+      xss: [
+        'Record admin menyebut sebuah halaman yang masih memantulkan input.',
+        'Guestbook menggemakan apa yang kamu kirim. Coba sesuatu yang dianggap markup oleh browser.',
+        'Kirim <img src=x onerror=alert(1)> dan lihat apa yang terjadi. (Tidak ada yang sungguhan.)',
+      ],
+    },
+    pwned: {
+      docTitle: 'Asesmen keamanan — Edward',
+      eyebrow: 'asesmen keamanan · mini-ctf tersembunyi',
+      title: 'Asesmen keamanan',
+      subtitle: (n: number, total: number) => `Situs ini punya *${total} kerentanan*. Kamu menemukan *${n}*.`,
+      howto: 'Semuanya berantai seperti engagement sungguhan: recon, foothold, loot, eskalasi hak akses, persistensi. Tiap temuan menunjuk ke temuan berikutnya.',
+      undiscovered: '??? — belum ditemukan',
+      hint: (n: number, total: number) => `petunjuk ${n}/${total}`,
+      noMoreHints: 'petunjuk habis',
+      foundAt: 'ditemukan',
+      reset: 'Reset progres',
+      resetConfirm: 'Hapus semua flag dan petunjuk yang sudah dibuka? Permainan dimulai dari awal.',
+      payoff: {
+        title: 'Kamu berpikir seperti penyerang. Aku juga.',
+        body: 'Lima dari lima, seluruh rantainya. Persis pola pikir yang kubawa ke setiap engagement, dan menulis laporannya adalah bagian yang paling kunikmati.',
+        about: 'Lebih lanjut tentangku',
+        contact: 'Sapa aku di LinkedIn',
+      },
+    },
+  },
 };

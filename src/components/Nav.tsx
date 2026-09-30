@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useRouter } from '../lib/router.tsx';
 import { PhaseIcon } from './PhaseIcon.tsx';
+import { VulnCounter } from './VulnCounter.tsx';
 import { useData } from '../i18n/data.ts';
 import { useLang, useT } from '../i18n/locale.tsx';
 import { LANGS } from '../i18n/l.ts';
@@ -65,6 +66,7 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
             </ul>
           </nav>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <VulnCounter />
             <LangToggle />
             <button className="nav-kbd" type="button" onClick={onOpenPalette} aria-label={t.nav.openTerminal}>
               <span className="sigil">$_</span><span>{t.nav.terminal}</span>
@@ -82,6 +84,7 @@ export function Nav({ onOpenPalette }: { onOpenPalette: () => void }) {
         ))}
         <a href={profile.linkedin} target="_blank" rel="noreferrer">{t.nav.linkedin} ↗</a>
         <button type="button" className="nav-menu-term" onClick={() => { setOpen(false); onOpenPalette(); }}>$_ {t.nav.terminal}</button>
+        <VulnCounter variant="menu" />
         <LangToggle />
       </div>
     </>

@@ -3,6 +3,8 @@ import { useRouter } from '../lib/router.tsx';
 import { loadPostIndex, type PostMeta } from '../lib/markdown.ts';
 import { getData } from '../i18n/data.ts';
 import { NAV_LINKS } from './Nav.tsx';
+import { useCtf } from '../ctf/progress.tsx';
+import { ROBOTS_TXT } from '../ctf/fakefs.ts';
 
 /**
  * A Kali-style terminal that doubles as the site's navigator. Pages are
@@ -20,7 +22,11 @@ interface Entry { name: string; kind: 'dir' | 'file'; to: string }
 interface Line { id: number; node: ReactNode }
 interface Suggestion { label: string; value: string; run: boolean }
 
-const COMMANDS = ['help', 'ls', 'cd', 'cat', 'pwd', 'clear', 'exit', 'whoami', 'neofetch', 'history', 'echo', 'linkedin'];
+const COMMANDS = ['help', 'ls', 'cd', 'cat', 'pwd', 'clear', 'exit', 'whoami', 'neofetch', 'history', 'echo', 'linkedin', 'nmap', 'gobuster', 'flags'];
+
+const HOST_NAME = 'edward27-lab.github.io';
+/** Tools that get a playful refusal: the game is meant to be played by hand. */
+const NICE_TRY = ['sqlmap', 'hydra', 'msfconsole', 'metasploit', 'nikto', 'burpsuite', 'wpscan', 'john', 'hashcat'];
 
 /** Lower-case and strip accents so `cd résumé` and `cd resume` both work. */
 const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -46,6 +52,8 @@ const HELP = [
   'pwd             show where you are',
   'neofetch        who is this guy',
   'linkedin        open LinkedIn in a new tab',
+  'nmap · gobuster recon, if you are into that',
+  'flags           mini-ctf progress',
   'clear · history · whoami · echo · exit',
   'tab completes · up/down scrolls history or picks from the dropdown',
 ].join('\n');
@@ -60,6 +68,7 @@ const ART = [
 
 export function Terminal({ onClose }: { onClose: () => void }) {
   const { path, navigate } = useRouter();
+  const { count, total } = useCtf();
   const [posts, setPosts] = useState<PostMeta[]>([]);
   const [input, setInput] = useState('');
   const [lines, setLines] = useState<Line[]>(() => [
@@ -139,6 +148,7 @@ export function Terminal({ onClose }: { onClose: () => void }) {
       }
       case 'cat': {
         if (!arg) { push(<span className="err">cat: missing file operand</span>); break; }
+        if (/^(~\/|\/)?robots\.txt$/i.test(arg)) { push(<span className="out">{ROBOTS_TXT}</span>); break; }
         const p = resolve(cwd, arg);
         if (p === '/readme') {
           push(<span className="out">{`# ${profile.name}\n${profile.role} · ${profile.location}\n${profile.tagline}\n${profile.status}`}</span>);
@@ -166,10 +176,37 @@ export function Terminal({ onClose }: { onClose: () => void }) {
             'Uni:       Monash BIT (Cybersecurity) · Dec 2026',
             `Langs:     ${profile.languages.map((l) => l.name).join(', ')}`,
             `Status:    ${profile.status}`,
+            ...(count >= total ? [`Pwned:     ${count}/${total}`] : []),
           ].join('\n')}</span>
         </span>);
         break;
+      case 'nmap':
+        push(<span className="out">{[
+          'Starting Nmap 7.94 ( https://nmap.org )',
+          `Nmap scan report for ${arg || HOST_NAME}`,
+          'Host is up (0.0042s latency).',
+          '',
+          'PORT      STATE     SERVICE',
+          '443/tcp   open      https',
+          '31337/tcp filtered  elite       # robots know the way',
+          '',
+          'Nmap done: 1 IP address (1 host up) scanned in 1.33 seconds',
+        ].join('\n')}</span>);
+        break;
+      case 'gobuster': case 'dirb': case 'dirbuster': case 'ffuf': {
+        const words = ['/images', '/css', '/js', '/api', '/login', '/backup', '/uploads', '/robots.txt', '/admin'];
+        push(<span className="muted">{`${cmd}: scanning https://${HOST_NAME} with common.txt (${words.length} words)`}</span>);
+        words.forEach((w, i) => {
+          const hit = w === '/admin' || w === '/robots.txt';
+          window.setTimeout(() => push(<span className={hit ? 'out' : 'muted'}>{`${w.padEnd(14)} (Status: ${hit ? 200 : 404})`}</span>), 110 * (i + 1));
+        });
+        break;
+      }
+      case 'flags':
+        push(<span className="out">{`${count}/${total} — details at /pwned`}</span>);
+        break;
       default:
+        if (NICE_TRY.includes(cmd)) { push(<span className="err">nice try. the old-fashioned way: /robots.txt</span>); break; }
         push(<span className="err">bash: {cmd}: command not found</span>);
     }
   };

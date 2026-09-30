@@ -153,6 +153,79 @@ export const en = {
     body: 'That page does not exist. Try the moon instead.',
     back: 'Back home',
   },
+  /**
+   * Hidden mini-CTF (src/ctf/). Only the game's own UI is localised: the
+   * counter, the capture card and the /pwned scoreboard. The fake legacy
+   * admin panel, its MySQL/PHP errors, robots.txt and /etc/passwd stay in
+   * English on purpose: real servers do not localise their error messages.
+   */
+  ctf: {
+    counter: {
+      label: 'vulns',
+      aria: (n: number, total: number) => `Vulnerabilities found: ${n} of ${total}. Open the scoreboard.`,
+    },
+    capture: {
+      found: 'Vulnerability found',
+      copy: 'copy',
+      copied: 'copied',
+      progress: 'Progress:',
+      viewBoard: 'View board',
+      dismiss: 'Dismiss',
+    },
+    vulns: {
+      recon: { name: 'Information disclosure', sub: 'recon' },
+      sqli: { name: 'SQL injection', sub: 'authentication bypass' },
+      traversal: { name: 'Path traversal', sub: 'arbitrary file read' },
+      idor: { name: 'IDOR', sub: 'privilege escalation' },
+      xss: { name: 'Reflected XSS', sub: 'persistence' },
+    },
+    hints: {
+      recon: [
+        'Every pentest starts the same way: look at what the site tells crawlers not to look at.',
+        'There is a plain-text file at the root of every well-behaved site that lists the paths its owner would rather keep quiet.',
+        'Open /robots.txt, then go exactly where it says not to.',
+      ],
+      sqli: [
+        'The old panel has a login form. Its error messages say more than they should.',
+        'That error is MySQL talking. Your input lands inside a quoted string in a query.',
+        "Close the quote and make the condition always true: ' OR 1=1 --",
+      ],
+      traversal: [
+        'The File Manager takes a filename from the URL. Does it check where that file lives?',
+        'notes.txt mentions what kind of paths the viewer accepts.',
+        'Climb out of the share: ?file=../../etc/passwd',
+      ],
+      idor: [
+        'The Users page shows your own record. What identifies it in the URL?',
+        'A hint about where ids start is sitting at the bottom of a file you have already read.',
+        'Change ?id=2 to ?id=1.',
+      ],
+      xss: [
+        'The admin record mentions a page that still reflects input.',
+        'The guestbook echoes what you post. Try something a browser would treat as markup.',
+        'Post <img src=x onerror=alert(1)> and watch what happens. (Nothing real does.)',
+      ],
+    },
+    pwned: {
+      docTitle: 'Security assessment — Edward',
+      eyebrow: 'security assessment · hidden mini-ctf',
+      title: 'Security assessment',
+      subtitle: (n: number, total: number) => `This site has *${total} vulnerabilities*. You found *${n}*.`,
+      howto: 'They chain like a real engagement: recon, foothold, loot, privilege escalation, persistence. Each find points at the next.',
+      undiscovered: '??? — undiscovered',
+      hint: (n: number, total: number) => `hint ${n}/${total}`,
+      noMoreHints: 'no more hints',
+      foundAt: 'found',
+      reset: 'Reset progress',
+      resetConfirm: 'Clear all captured flags and revealed hints? The game starts over.',
+      payoff: {
+        title: 'You think like an attacker. So do I.',
+        body: 'Five for five, the whole chain. That is exactly the mindset I bring to an engagement, and the write-up is the part I enjoy most.',
+        about: 'More about me',
+        contact: 'Say hello on LinkedIn',
+      },
+    },
+  },
 };
 
 export type Strings = typeof en;

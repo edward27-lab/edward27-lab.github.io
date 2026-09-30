@@ -16,6 +16,14 @@ import { Resume } from './pages/Resume.tsx';
 import { Blog } from './pages/Blog.tsx';
 import { BlogPost } from './pages/BlogPost.tsx';
 import { NotFound } from './pages/NotFound.tsx';
+import { CtfProgressProvider } from './ctf/progress.tsx';
+import { FlagCapture } from './components/FlagCapture.tsx';
+import { AdminLogin } from './pages/AdminLogin.tsx';
+import { AdminPanel } from './pages/AdminPanel.tsx';
+import { AdminFiles } from './pages/AdminFiles.tsx';
+import { AdminUsers } from './pages/AdminUsers.tsx';
+import { Guestbook } from './pages/Guestbook.tsx';
+import { Pwned } from './pages/Pwned.tsx';
 import type { MoonMode } from './three/MoonScene.ts';
 
 interface RouteDef {
@@ -33,6 +41,13 @@ const ROUTES: RouteDef[] = [
   { pattern: '/resume', mode: 'quiet', render: () => <Resume /> },
   { pattern: '/blog', mode: 'ambient', render: () => <Blog /> },
   { pattern: '/blog/:slug', mode: 'quiet', render: (p) => <BlogPost slug={p.slug} /> },
+  // hidden mini-CTF (see src/ctf/): the "forgotten" legacy admin panel and its scoreboard
+  { pattern: '/admin', mode: 'quiet', render: () => <AdminLogin /> },
+  { pattern: '/admin/panel', mode: 'quiet', render: () => <AdminPanel /> },
+  { pattern: '/admin/panel/files', mode: 'quiet', render: () => <AdminFiles /> },
+  { pattern: '/admin/panel/users', mode: 'quiet', render: () => <AdminUsers /> },
+  { pattern: '/admin/panel/guestbook', mode: 'quiet', render: () => <Guestbook /> },
+  { pattern: '/pwned', mode: 'quiet', render: () => <Pwned /> },
 ];
 
 function Shell() {
@@ -94,6 +109,7 @@ function Shell() {
         </div>
       </main>
       <Footer />
+      <FlagCapture />
       <Cursor />
       <div className={`page-transition ${transitionKey ? 'is-active' : ''}`} key={`t${transitionKey}`} aria-hidden="true" />
       {paletteOpen && <Terminal onClose={() => setPaletteOpen(false)} />}
@@ -105,7 +121,9 @@ export function App() {
   return (
     <RouterProvider>
       <LocaleProvider>
-        <Shell />
+        <CtfProgressProvider>
+          <Shell />
+        </CtfProgressProvider>
       </LocaleProvider>
     </RouterProvider>
   );

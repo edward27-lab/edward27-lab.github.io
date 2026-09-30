@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /admin
+# TODO(edward): decommission the old panel before launch
